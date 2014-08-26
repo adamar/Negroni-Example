@@ -31,20 +31,11 @@ func main() {
   })
 
   mux.HandleFunc("/login", func(w http.ResponseWriter, r *http.Request) {
-    Splash(w, r, db)
+    Login(w, r, db)
   })
 
-  mux.HandleFunc("/logout", func(w http.ResponseWriter, r *http.Request) {
-    Splash(w, r, db)
-  })
 
-  mux.HandleFunc("/signup", func(w http.ResponseWriter, r *http.Request) {
-    Splash(w, r, db)
-  })
 
-  mux.HandleFunc("/home", func(w http.ResponseWriter, r *http.Request) {
-    Splash(w, r, db)
-  })
 
 
 
@@ -77,7 +68,9 @@ func Splash(w http.ResponseWriter, req *http.Request) {
 func Login(w http.ResponseWriter, req *http.Request, db mysql.Conn) {
 
 
-    rows, _, err := db.Query("SELECT * FROM users")
+    username := req.FormValue("username")
+    SQL := "SELECT username, password FROM users WHERE username = " + username
+    rows, _, err := db.Query(SQL)
 
     errHandler(err)
 
