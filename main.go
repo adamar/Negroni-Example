@@ -30,11 +30,15 @@ func main() {
     Splash(w, r)
   })
 
+
+
   mux.HandleFunc("/login", func(w http.ResponseWriter, r *http.Request) {
-    Login(w, r, db)
+    if r.Method == "GET" {
+        Login(w, r )
+    } else if r.Method == "POST" {
+        LoginPost(w, r, db)
+    }
   })
-
-
 
 
 
@@ -64,8 +68,17 @@ func Splash(w http.ResponseWriter, req *http.Request) {
 
 
 
+func Login(w http.ResponseWriter, req *http.Request) {
 
-func Login(w http.ResponseWriter, req *http.Request, db mysql.Conn) {
+    r := render.New(render.Options{})
+    r.HTML(w, http.StatusOK, "example", nil)
+
+}
+
+
+
+
+func LoginPost(w http.ResponseWriter, req *http.Request, db mysql.Conn) {
 
 
     username := req.FormValue("username")
