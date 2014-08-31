@@ -27,17 +27,30 @@ func main() {
   n := negroni.Classic()
 
   mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-    SimplePage(w, r, "example")
+    SimplePage(w, r, "mainpage")
   })
-
 
 
   mux.HandleFunc("/login", func(w http.ResponseWriter, r *http.Request) {
     if r.Method == "GET" {
-        SimplePage(w, r, "example")
+        SimplePage(w, r, "login")
     } else if r.Method == "POST" {
         LoginPost(w, r, db)
     }
+  })
+
+
+  mux.HandleFunc("/signup", func(w http.ResponseWriter, r *http.Request) {
+    if r.Method == "GET" {
+        SimplePage(w, r, "signup")
+    } else if r.Method == "POST" {
+        SignupPost(w, r, db)
+    }
+  })
+
+
+  mux.HandleFunc("/logout", func(w http.ResponseWriter, r *http.Request) {
+    SimplePage(w, r, "logout")
   })
 
 
@@ -57,24 +70,12 @@ func errHandler(err error) {
 
 
 
-
-
 func SimplePage(w http.ResponseWriter, req *http.Request, template string) {
 
     r := render.New(render.Options{})
     r.HTML(w, http.StatusOK, template, nil)
 
 }
-
-
-
-func Login(w http.ResponseWriter, req *http.Request, template string) {
-
-    r := render.New(render.Options{})
-    r.HTML(w, http.StatusOK, template, nil)
-
-}
-
 
 
 
@@ -97,6 +98,26 @@ func LoginPost(w http.ResponseWriter, req *http.Request, db mysql.Conn) {
 
 }
 
+
+
+func SignupPost(w http.ResponseWriter, req *http.Request, db mysql.Conn) {
+
+
+    username := req.FormValue("username")
+    SQL := "SELECT username, password FROM users WHERE username = " + username
+    rows, _, err := db.Query(SQL)
+
+    errHandler(err)
+
+    for _, row := range rows {
+        log.Print(row.Str(1))
+    }
+
+
+    r := render.New(render.Options{})
+    r.HTML(w, http.StatusOK, "example", nil)
+
+}
 
 
 
