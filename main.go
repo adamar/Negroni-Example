@@ -27,14 +27,14 @@ func main() {
   n := negroni.Classic()
 
   mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-    Splash(w, r)
+    SimplePage(w, r, "example")
   })
 
 
 
   mux.HandleFunc("/login", func(w http.ResponseWriter, r *http.Request) {
     if r.Method == "GET" {
-        Login(w, r )
+        SimplePage(w, r, "example")
     } else if r.Method == "POST" {
         LoginPost(w, r, db)
     }
@@ -59,19 +59,19 @@ func errHandler(err error) {
 
 
 
-func Splash(w http.ResponseWriter, req *http.Request) {
+func SimplePage(w http.ResponseWriter, req *http.Request, template string) {
 
     r := render.New(render.Options{})
-    r.HTML(w, http.StatusOK, "example", nil)
+    r.HTML(w, http.StatusOK, template, nil)
 
 }
 
 
 
-func Login(w http.ResponseWriter, req *http.Request) {
+func Login(w http.ResponseWriter, req *http.Request, template string) {
 
     r := render.New(render.Options{})
-    r.HTML(w, http.StatusOK, "example", nil)
+    r.HTML(w, http.StatusOK, template, nil)
 
 }
 
