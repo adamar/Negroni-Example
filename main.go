@@ -6,12 +6,11 @@ import (
     "net/http"
     "github.com/codegangsta/negroni"
     "github.com/unrolled/render"
+    "github.com/goincremental/negroni-sessions"
     "log"
-    //"database/sql"
     "github.com/ziutek/mymysql/mysql"
     _ "github.com/ziutek/mymysql/native"
       )
-
 
 
 
@@ -26,9 +25,19 @@ func main() {
   mux := http.NewServeMux()
   n := negroni.Classic()
 
+
+  store := sessions.NewCookieStore([]byte("ohhhsooosecret")) 
+  n.Use(sessions.Sessions("gloabl_session_store", store))
+
   mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
     SimplePage(w, r, "mainpage")
   })
+
+
+  mux.HandleFunc("/home", func(w http.ResponseWriter, r *http.Request) {
+    SimpleAuthenticatedPage(w, r, "mainpage")
+  })
+
 
 
   mux.HandleFunc("/login", func(w http.ResponseWriter, r *http.Request) {
@@ -78,13 +87,35 @@ func SimplePage(w http.ResponseWriter, req *http.Request, template string) {
 }
 
 
+func SimpleAuthenticatedPage(w http.ResponseWriter, req *http.Request, template string) {
+
+    session := sessions.GetSession(req)
+    session.Set("hello", "world")
+
+    sess := session.Get("hello")
+
+    if sess == nil {
+        http.Redirect(w, req, "/notauthenticated", 301)
+    }
+
+    r := render.New(render.Options{})
+    r.HTML(w, http.StatusOK, template, nil)
+
+}
+
+
+
 
 func LoginPost(w http.ResponseWriter, req *http.Request, db mysql.Conn) {
 
+    session := sessions.GetSession(req)
+    session.Set("hello", "world")
 
     username := req.FormValue("username")
-    SQL := "SELECT username, password FROM users WHERE username = " + username
-    rows, _, err := db.Query(SQL)
+    password := req.FormValue("password")
+
+    rows, _, err := db.Query("SELECT * FROM users WHERE password = '?' AND username = '?'", username, password)
+
 
     errHandler(err)
 
@@ -104,8 +135,11 @@ func SignupPost(w http.ResponseWriter, req *http.Request, db mysql.Conn) {
 
 
     username := req.FormValue("username")
-    SQL := "SELECT username, password FROM users WHERE username = " + username
-    rows, _, err := db.Query(SQL)
+    password := req.FormValue("password")
+    email := req.FormValue("email")
+
+    //SQL := "INSERT INTO users (username, password, email) VAUES ('?', '?', '?')", username, email, password
+    rows, _, err := db.Query("INSERT INTO users (username, password, email) VAUES ('?', '?', '?')", username, email, password)
 
     errHandler(err)
 
@@ -118,14 +152,6 @@ func SignupPost(w http.ResponseWriter, req *http.Request, db mysql.Conn) {
     r.HTML(w, http.StatusOK, "example", nil)
 
 }
-
-
-
-
-
-
-
-
 
 
 
