@@ -7,8 +7,6 @@ import (
 	"github.com/unrolled/render"
 	"log"
 	"net/http"
-	//"github.com/ziutek/mymysql/mysql"
-	//_ "github.com/ziutek/mymysql/native"
 	_ "github.com/go-sql-driver/mysql"
 )
 
@@ -16,8 +14,6 @@ var db *sql.DB
 
 func main() {
 
-	//db = mysql.New("tcp", "", "127.0.0.1:3306", "root", "", "negroni")
-	//db, _ = sql.Open("mysql", "root@unix(/tmp/mysql.sock)/mydb")
 	db, _ = sql.Open("mysql", "root:@tcp(127.0.0.1:3306)/negroni")
 	//err := db.Connect()
 	//errHandler(err)
@@ -106,7 +102,6 @@ func LoginPost(w http.ResponseWriter, req *http.Request) {
 		uname string
 	)
 
-	// errHandler(err)
 
 	for rows.Next() {
 		rows.Scan(&uname)
@@ -124,10 +119,7 @@ func SignupPost(w http.ResponseWriter, req *http.Request) {
 	password := req.FormValue("password")
 	email := req.FormValue("email")
 
-	//SQL := "INSERT INTO users (username, password, email) VAUES ('?', '?', '?')", username, email, password
 	db.Exec("INSERT INTO users (username, password, email) VAUES ('?', '?', '?')", username, email, password)
-
-	//errHandler(err)
 
 	r := render.New(render.Options{})
 	r.HTML(w, http.StatusOK, "example", nil)
