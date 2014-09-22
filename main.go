@@ -8,17 +8,24 @@ import (
     "github.com/unrolled/render"
     "github.com/goincremental/negroni-sessions"
     "log"
-    "github.com/ziutek/mymysql/mysql"
-    _ "github.com/ziutek/mymysql/native"
+    "database/sql"
+    //"github.com/ziutek/mymysql/mysql"
+    //_ "github.com/ziutek/mymysql/native"
+    _ "github.com/go-sql-driver/mysql"
       )
 
+
+var db *sql.DB
 
 
 func main() {
 
-  db := mysql.New("tcp", "", "127.0.0.1:3306", "root", "", "negroni")
-  err := db.Connect()
-     errHandler(err)
+  //db = mysql.New("tcp", "", "127.0.0.1:3306", "root", "", "negroni")
+  //db, _ = sql.Open("mysql", "root@unix(/tmp/mysql.sock)/mydb")
+  db, _ = sql.Open("mysql","root:@tcp(127.0.0.1:3306)/negroni")
+  //err := db.Connect()
+  //errHandler(err)
+  db.Ping()
   defer db.Close()
 
 
@@ -44,7 +51,7 @@ func main() {
     if r.Method == "GET" {
         SimplePage(w, r, "login")
     } else if r.Method == "POST" {
-        LoginPost(w, r, db)
+        LoginPost(w, r)
     }
   })
 
@@ -53,7 +60,7 @@ func main() {
     if r.Method == "GET" {
         SimplePage(w, r, "signup")
     } else if r.Method == "POST" {
-        SignupPost(w, r, db)
+        SignupPost(w, r)
     }
   })
 
@@ -106,7 +113,7 @@ func SimpleAuthenticatedPage(w http.ResponseWriter, req *http.Request, template 
 
 
 
-func LoginPost(w http.ResponseWriter, req *http.Request, db mysql.Conn) {
+func LoginPost(w http.ResponseWriter, req *http.Request) {
 
     session := sessions.GetSession(req)
     session.Set("hello", "world")
@@ -114,13 +121,18 @@ func LoginPost(w http.ResponseWriter, req *http.Request, db mysql.Conn) {
     username := req.FormValue("username")
     password := req.FormValue("password")
 
-    rows, _, err := db.Query("SELECT * FROM users WHERE password = '?' AND username = '?'", username, password)
+    rows, _ := db.Query("SELECT username FROM users WHERE password = '?' AND username = '?'", username, password)
 
 
-    errHandler(err)
+    var (
+       uname string
+    )
 
-    for _, row := range rows {
-        log.Print(row.Str(1))
+   // errHandler(err)
+
+    for rows.Next() {
+        rows.Scan(&uname)
+        log.Print(uname)
     }
 
 
@@ -131,7 +143,7 @@ func LoginPost(w http.ResponseWriter, req *http.Request, db mysql.Conn) {
 
 
 
-func SignupPost(w http.ResponseWriter, req *http.Request, db mysql.Conn) {
+func SignupPost(w http.ResponseWriter, req *http.Request) {
 
 
     username := req.FormValue("username")
@@ -139,13 +151,10 @@ func SignupPost(w http.ResponseWriter, req *http.Request, db mysql.Conn) {
     email := req.FormValue("email")
 
     //SQL := "INSERT INTO users (username, password, email) VAUES ('?', '?', '?')", username, email, password
-    rows, _, err := db.Query("INSERT INTO users (username, password, email) VAUES ('?', '?', '?')", username, email, password)
+    db.Exec("INSERT INTO users (username, password, email) VAUES ('?', '?', '?')", username, email, password)
 
-    errHandler(err)
+    //errHandler(err)
 
-    for _, row := range rows {
-        log.Print(row.Str(1))
-    }
 
 
     r := render.New(render.Options{})
