@@ -6,6 +6,7 @@ import (
 	"github.com/goincremental/negroni-sessions"
 	"github.com/unrolled/render"
 	"log"
+        "fmt"
 	"net/http"
 	_ "github.com/go-sql-driver/mysql"
 )
@@ -13,6 +14,7 @@ import (
 var db *sql.DB
 
 func main() {
+
 
 	db, _ = sql.Open("mysql", "root:@tcp(127.0.0.1:3306)/negroni")
 	//err := db.Connect()
@@ -104,7 +106,10 @@ func LoginPost(w http.ResponseWriter, req *http.Request) {
         err := db.QueryRow("SELECT email FROM users WHERE username = ? AND password = ?", username, password).Scan(&email)
         if err != nil {
 	    log.Fatal(err)
+            http.Redirect(w, req, "/failedquery", 301)
         }
+
+        fmt.Println(email)
 
 	r := render.New(render.Options{})
 	r.HTML(w, http.StatusOK, "example", nil)
