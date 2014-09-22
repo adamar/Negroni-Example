@@ -96,17 +96,15 @@ func LoginPost(w http.ResponseWriter, req *http.Request) {
 	username := req.FormValue("username")
 	password := req.FormValue("password")
 
-	rows, _ := db.Query("SELECT username FROM users WHERE password = '?' AND username = '?'", username, password)
 
-	var (
-		uname string
-	)
+        var (
+          email string
+        )
 
-
-	for rows.Next() {
-		rows.Scan(&uname)
-		log.Print(uname)
-	}
+        err := db.QueryRow("SELECT email FROM users WHERE username = ? AND password = ?", username, password).Scan(&email)
+        if err != nil {
+	    log.Fatal(err)
+        }
 
 	r := render.New(render.Options{})
 	r.HTML(w, http.StatusOK, "example", nil)
