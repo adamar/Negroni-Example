@@ -112,7 +112,7 @@ func LoginPost(w http.ResponseWriter, req *http.Request) {
         fmt.Println(email)
 
 	r := render.New(render.Options{})
-	r.HTML(w, http.StatusOK, "example", nil)
+	r.HTML(w, http.StatusOK, "home", nil)
 
 }
 
@@ -125,6 +125,6 @@ func SignupPost(w http.ResponseWriter, req *http.Request) {
 	db.Exec("INSERT INTO users (username, password, email) VAUES ('?', '?', '?')", username, email, password)
 
 	r := render.New(render.Options{})
-	r.HTML(w, http.StatusOK, "example", nil)
+	r.HTML(w, http.StatusOK, "home", nil)
 
 }
