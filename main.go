@@ -32,9 +32,6 @@ func main() {
 		SimplePage(w, r, "mainpage")
 	})
 
-	mux.HandleFunc("/home", func(w http.ResponseWriter, r *http.Request) {
-		SimpleAuthenticatedPage(w, r, "mainpage")
-	})
 
 	mux.HandleFunc("/login", func(w http.ResponseWriter, r *http.Request) {
 		if r.Method == "GET" {
@@ -56,6 +53,13 @@ func main() {
 		SimplePage(w, r, "logout")
 	})
 
+
+	mux.HandleFunc("/home", func(w http.ResponseWriter, r *http.Request) {
+		SimpleAuthenticatedPage(w, r, "home")
+	})
+
+
+
 	n.UseHandler(mux)
 	n.Run(":3000")
 
@@ -76,9 +80,7 @@ func SimplePage(w http.ResponseWriter, req *http.Request, template string) {
 
 func SimpleAuthenticatedPage(w http.ResponseWriter, req *http.Request, template string) {
 
-	session := sessions.GetSession(req)
-	session.Set("hello", "world")
-
+        session := sessions.GetSession(req)
 	sess := session.Get("hello")
 
 	if sess == nil {
@@ -111,8 +113,10 @@ func LoginPost(w http.ResponseWriter, req *http.Request) {
 
         fmt.Println(email)
 
-	r := render.New(render.Options{})
-	r.HTML(w, http.StatusOK, "home", nil)
+	//r := render.New(render.Options{})
+	//r.HTML(w, http.StatusOK, "home", nil)
+
+        http.Redirect(w, req, "/home", 302)
 
 }
 
@@ -124,7 +128,6 @@ func SignupPost(w http.ResponseWriter, req *http.Request) {
 
 	db.Exec("INSERT INTO users (username, password, email) VAUES ('?', '?', '?')", username, email, password)
 
-	r := render.New(render.Options{})
-	r.HTML(w, http.StatusOK, "home", nil)
+        http.Redirect(w, req, "/login", 302)
 
 }
