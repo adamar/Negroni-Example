@@ -1,7 +1,7 @@
 
-CREATE DATABASE `negroni`;
+CREATE DATABASE IF NOT EXISTS `negroni`;
 
-CREATE TABLE `users` (
+CREATE TABLE IF NOT EXISTS `users` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `username` VARCHAR(60),
   `password` VARCHAR(60),
