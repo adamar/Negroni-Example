@@ -9,6 +9,7 @@ import (
 	"github.com/unrolled/render"
 	"log"
 	"net/http"
+    "encoding/json"
 )
 
 var db *sql.DB
@@ -54,6 +55,11 @@ func main() {
 	mux.HandleFunc("/home", func(w http.ResponseWriter, r *http.Request) {
 		SimpleAuthenticatedPage(w, r, "home")
 	})
+
+    mux.HandleFunc("/api", func(w http.ResponseWriter, r *http.Request) {
+        APIHandler(w, r)
+    })
+
 
 	n.UseHandler(mux)
 	n.Run(":3000")
@@ -125,3 +131,15 @@ func SignupPost(w http.ResponseWriter, req *http.Request) {
 	http.Redirect(w, req, "/login", 302)
 
 }
+
+
+
+
+func APIHandler(w http.ResponseWriter, req *http.Request) {
+
+    data, _ := json.Marshal("{'name':'frank'}")
+    w.Header().Set("Content-Type", "application/json; charset=utf-8")
+    w.Write(data)
+
+}
+
