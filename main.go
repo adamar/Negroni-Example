@@ -2,6 +2,7 @@ package main
 
 import (
 	"database/sql"
+	"encoding/json"
 	"fmt"
 	"github.com/codegangsta/negroni"
 	_ "github.com/go-sql-driver/mysql"
@@ -9,7 +10,6 @@ import (
 	"github.com/unrolled/render"
 	"log"
 	"net/http"
-    "encoding/json"
 )
 
 var db *sql.DB
@@ -56,10 +56,9 @@ func main() {
 		SimpleAuthenticatedPage(w, r, "home")
 	})
 
-        mux.HandleFunc("/api", func(w http.ResponseWriter, r *http.Request) {
-                APIHandler(w, r)
-        })
-
+	mux.HandleFunc("/api", func(w http.ResponseWriter, r *http.Request) {
+		APIHandler(w, r)
+	})
 
 	n.UseHandler(mux)
 	n.Run(":3000")
@@ -132,14 +131,10 @@ func SignupPost(w http.ResponseWriter, req *http.Request) {
 
 }
 
-
-
-
 func APIHandler(w http.ResponseWriter, req *http.Request) {
 
-    data, _ := json.Marshal("{'API Test':'works!'}")
-    w.Header().Set("Content-Type", "application/json; charset=utf-8")
-    w.Write(data)
+	data, _ := json.Marshal("{'API Test':'works!'}")
+	w.Header().Set("Content-Type", "application/json; charset=utf-8")
+	w.Write(data)
 
 }
-

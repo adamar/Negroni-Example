@@ -8,7 +8,7 @@ Features
 ----------
 * Signup/Login
 * Pages rendered from templates
-* ???
+* API
 
 
 Requirements
