@@ -56,9 +56,9 @@ func main() {
 		SimpleAuthenticatedPage(w, r, "home")
 	})
 
-    mux.HandleFunc("/api", func(w http.ResponseWriter, r *http.Request) {
-        APIHandler(w, r)
-    })
+        mux.HandleFunc("/api", func(w http.ResponseWriter, r *http.Request) {
+                APIHandler(w, r)
+        })
 
 
 	n.UseHandler(mux)
@@ -137,7 +137,7 @@ func SignupPost(w http.ResponseWriter, req *http.Request) {
 
 func APIHandler(w http.ResponseWriter, req *http.Request) {
 
-    data, _ := json.Marshal("{'name':'frank'}")
+    data, _ := json.Marshal("{'API Test':'works!'}")
     w.Header().Set("Content-Type", "application/json; charset=utf-8")
     w.Write(data)
 
