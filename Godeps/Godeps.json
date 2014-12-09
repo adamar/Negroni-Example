@@ -1,0 +1,54 @@
+{
+	"ImportPath": "github.com/adamar/negroni-example",
+	"GoVersion": "go1.3.1",
+	"Deps": [
+		{
+			"ImportPath": "github.com/boj/redistore",
+			"Comment": "v1",
+			"Rev": "9d1554b400d726c7aa54b6e4a836f273b72b97f7"
+		},
+		{
+			"ImportPath": "github.com/codegangsta/negroni",
+			"Comment": "v0.1-27-g46bd821",
+			"Rev": "46bd821940d86fb9777f7f86e9ae428132e110da"
+		},
+		{
+			"ImportPath": "github.com/garyburd/redigo/redis",
+			"Rev": "933e59f1797af379095160ca63961442442e8807"
+		},
+		{
+			"ImportPath": "github.com/goincremental/dal",
+			"Comment": "v0.2.0",
+			"Rev": "c3d951003981b0452c8ec663ca26f305af281544"
+		},
+		{
+			"ImportPath": "github.com/goincremental/negroni-sessions",
+			"Rev": "df4a04bbb25c4c5e24aaf918958d847e54f736a8"
+		},
+		{
+			"ImportPath": "github.com/gorilla/context",
+			"Rev": "708054d61e5a2918b9f4e9700000ee611dcf03f5"
+		},
+		{
+			"ImportPath": "github.com/gorilla/securecookie",
+			"Rev": "1b0c7f6e9ab3d7f500fd7d50c7ad835ff428139b"
+		},
+		{
+			"ImportPath": "github.com/gorilla/sessions",
+			"Rev": "aa5e036e6c44aec69a32eb41097001978b29ad31"
+		},
+		{
+			"ImportPath": "github.com/lib/pq",
+			"Rev": "7175accbed18058468c07811f76440d6e8d7cf19"
+		},
+		{
+			"ImportPath": "github.com/unrolled/render",
+			"Rev": "40ac5716c7e0bffcc440aac649ea4b880a5d7735"
+		},
+		{
+			"ImportPath": "labix.org/v2/mgo",
+			"Comment": "263",
+			"Rev": "gustavo@niemeyer.net-20140126000127-qe9fwt48ceby11ts"
+		}
+	]
+}
