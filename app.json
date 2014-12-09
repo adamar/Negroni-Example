@@ -1,0 +1,6 @@
+{
+  "name": "Negroni Example",
+  "description": "A barebones Negroni Example",
+  "repository": "https://github.com/adamar/negroni-example",
+  "keywords": ["golang", "negroni", "postgres"]
+}
