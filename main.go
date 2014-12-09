@@ -17,7 +17,7 @@ var db *sql.DB
 func main() {
 
         db, err := sql.Open("postgres", "user=negroni dbname=dbname password=supersecurepassword host=mydbserver.example.com port=5432 sslmode=disable")
-        if err != {
+        if err != nil {
             panic(err)
         }
 	defer db.Close()
