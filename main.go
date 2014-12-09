@@ -1,12 +1,13 @@
 package main
 
 import (
-        "fmt"
+    "fmt"
 	"encoding/json"
 	"log"
 	"net/http"
-        "database/sql"
-        _"github.com/lib/pq"
+    "os"
+    "database/sql"
+    _ "github.com/lib/pq"
 	"github.com/codegangsta/negroni"
 	"github.com/goincremental/negroni-sessions"
 	"github.com/unrolled/render"
@@ -16,10 +17,10 @@ var db *sql.DB
 
 func main() {
 
-        db, err := sql.Open("postgres", "user=negroni dbname=dbname password=supersecurepassword host=mydbserver.example.com port=5432 sslmode=disable")
-        if err != nil {
-            panic(err)
-        }
+    db, err := sql.Open("postgres", "user=negroni dbname=dbname password=supersecurepassword host=mydbserver.example.com port=5432 sslmode=disable")
+    if err != nil {
+        panic(err)
+    }
 	defer db.Close()
 
 	mux := http.NewServeMux()
