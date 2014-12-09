@@ -61,7 +61,7 @@ func main() {
 	})
 
 	n.UseHandler(mux)
-	n.Run(":3000")
+	n.Run(":"+os.Getenv("PORT"))
 
 }
 
