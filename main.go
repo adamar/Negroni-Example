@@ -1,32 +1,32 @@
 package main
 
 import (
-	"database/sql"
+        "fmt"
 	"encoding/json"
-	"fmt"
-	"github.com/codegangsta/negroni"
-	_ "github.com/go-sql-driver/mysql"
-	"github.com/goincremental/negroni-sessions"
-	"github.com/unrolled/render"
 	"log"
 	"net/http"
+        "database/sql"
+        _"github.com/lib/pq"
+	"github.com/codegangsta/negroni"
+	"github.com/goincremental/negroni-sessions"
+	"github.com/unrolled/render"
 )
 
 var db *sql.DB
 
 func main() {
 
-	db, _ = sql.Open("mysql", "root:@tcp(127.0.0.1:3306)/negroni")
-	//err := db.Connect()
-	//errHandler(err)
-	db.Ping()
+        db, err := sql.Open("postgres", "user=negroni dbname=dbname password=supersecurepassword host=mydbserver.example.com port=5432 sslmode=disable")
+        if err != {
+            panic(err)
+        }
 	defer db.Close()
 
 	mux := http.NewServeMux()
 	n := negroni.Classic()
 
 	store := sessions.NewCookieStore([]byte("ohhhsooosecret"))
-	n.Use(sessions.Sessions("gloabl_session_store", store))
+	n.Use(sessions.Sessions("global_session_store", store))
 
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		SimplePage(w, r, "mainpage")

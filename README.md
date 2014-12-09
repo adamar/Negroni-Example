@@ -17,8 +17,13 @@ Requirements
 * Negroni
 * Negroni-sessions
 * Render
-* Go-MySQL-Driver
+* pq
 
+
+Try Me
+-----------
+
+Deploy to Heroku
 
 [![Deploy](https://www.herokucdn.com/deploy/button.png)](https://heroku.com/deploy?template=https://github.com/adamar/negroni-example)
 
