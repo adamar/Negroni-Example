@@ -61,6 +61,8 @@ func main() {
 		APIHandler(w, r)
 	})
 
+        mux.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
+
 	n.UseHandler(mux)
 	n.Run(":"+os.Getenv("PORT"))
 
