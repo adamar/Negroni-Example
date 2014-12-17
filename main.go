@@ -129,7 +129,7 @@ func LoginPost(w http.ResponseWriter, req *http.Request) {
 		email string
 	)
 
-	err := db.QueryRow("SELECT email FROM users WHERE username = ? AND password = ?", username, password).Scan(&email)
+	err := db.QueryRow("SELECT user_email FROM users WHERE user_name = ? AND user_password = ?", username, password).Scan(&email)
 	if err != nil {
 		log.Fatal(err)
 		http.Redirect(w, req, "/failedquery", 301)
