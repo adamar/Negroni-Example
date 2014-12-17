@@ -33,7 +33,7 @@ func init() {
                  user_last_login TIMESTAMP WITH TIME ZONE, 
                  PRIMARY KEY  (id),  
                  CONSTRAINT users_email UNIQUE (user_email)
-            };`)
+            );`)
 
     db.Exec(`INSERT INTO users (user_name, user_email, user_password)
              VALUES ('john', 'john@example.com', 'supersecret');`)
