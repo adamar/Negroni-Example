@@ -15,12 +15,30 @@ import (
 
 var db *sql.DB
 
-func main() {
+func init() {
 
     db, err := sql.Open("postgres", "user=negroni dbname=dbname password=supersecurepassword host=mydbserver.example.com port=5432 sslmode=disable")
     if err != nil {
         panic(err)
     }
+
+
+    db.Exec(`CREATE TABLE users (
+                 id SERIAL,
+                 user_name VARCHAR(60),  
+                 user_email VARCHAR(60),  
+                 user_password VARCHAR(60),  
+                 user_created TIMESTAMP WITH TIME ZONE,
+                 user_last_login TIMESTAMP WITH TIME ZONE, 
+                 PRIMARY KEY  (id),  
+                 CONSTRAINT users_email UNIQUE (user_email)
+            };`)
+
+
+}
+
+func main() {
+
 	defer db.Close()
 
 	mux := http.NewServeMux()
