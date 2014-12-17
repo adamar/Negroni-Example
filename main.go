@@ -18,7 +18,7 @@ var db *sql.DB
 func init() {
 
     db_url := os.Getenv("DATABASE_URL")
-    db, err = sql.Open("postgres", db_url)
+    db, err := sql.Open("postgres", db_url)
     if err != nil {
         panic(err)
     }
