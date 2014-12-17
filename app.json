@@ -4,9 +4,6 @@
   "repository": "https://github.com/adamar/negroni-example",
   "keywords": ["golang", "negroni", "postgres"],
   "success_url": "/",
-  "scripts": {
-    "postdeploy": "schema command"
-  },
   "addons": [
       "heroku-postgresql"
   ],

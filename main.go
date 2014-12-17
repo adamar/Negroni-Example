@@ -18,7 +18,7 @@ var db *sql.DB
 func init() {
 
     db_url := os.Getenv("DATABASE_URL")
-    db, err := sql.Open("postgres", db_url)
+    db, err = sql.Open("postgres", db_url)
     if err != nil {
         panic(err)
     }
@@ -36,7 +36,7 @@ func init() {
             };`)
 
     db.Exec(`INSERT INTO users (user_name, user_email, user_password)
-             VALUES ('john', 'john@example.com', 'supersecret');`
+             VALUES ('john', 'john@example.com', 'supersecret');`)
 
 
 }
