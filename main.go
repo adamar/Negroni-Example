@@ -17,7 +17,8 @@ var db *sql.DB
 
 func init() {
 
-    db, err := sql.Open("postgres", "user=negroni dbname=dbname password=supersecurepassword host=mydbserver.example.com port=5432 sslmode=disable")
+    db_url := os.Getenv("DATABASE_URL")
+    db, err := sql.Open("postgres", db_url)
     if err != nil {
         panic(err)
     }
@@ -33,6 +34,9 @@ func init() {
                  PRIMARY KEY  (id),  
                  CONSTRAINT users_email UNIQUE (user_email)
             };`)
+
+    db.Exec(`INSERT INTO users (user_name, user_email, user_password)
+             VALUES ('john', 'john@example.com', 'supersecret');`
 
 
 }
