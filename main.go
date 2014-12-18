@@ -63,7 +63,7 @@ func main() {
 	})
 
 	mux.HandleFunc("/logout", func(w http.ResponseWriter, r *http.Request) {
-		SimplePage(w, r, "logout")
+		Logout(w, r)
 	})
 
 	mux.HandleFunc("/home", func(w http.ResponseWriter, r *http.Request) {
@@ -93,11 +93,13 @@ func setupDB() *sql.DB {
 
 }
 
+
 func errHandler(err error) {
 	if err != nil {
 		log.Print(err)
 	}
 }
+
 
 func SimplePage(w http.ResponseWriter, req *http.Request, template string) {
 
@@ -106,10 +108,11 @@ func SimplePage(w http.ResponseWriter, req *http.Request, template string) {
 
 }
 
+
 func SimpleAuthenticatedPage(w http.ResponseWriter, req *http.Request, template string) {
 
 	session := sessions.GetSession(req)
-	sess := session.Get("hello")
+	sess := session.Get("useremail")
 
 	if sess == nil {
 		http.Redirect(w, req, "/notauthenticated", 301)
@@ -123,7 +126,6 @@ func SimpleAuthenticatedPage(w http.ResponseWriter, req *http.Request, template 
 func LoginPost(w http.ResponseWriter, req *http.Request) {
 
 	session := sessions.GetSession(req)
-	session.Set("hello", "world")
 
 	username := req.FormValue("inputUsername")
 	password := req.FormValue("inputPassword")
@@ -155,6 +157,15 @@ func SignupPost(w http.ResponseWriter, req *http.Request) {
 	}
 
 	http.Redirect(w, req, "/login", 302)
+
+}
+
+
+func Logout(w http.ResponseWriter, req *http.Request) {
+
+    session := sessions.GetSession(req)
+    session.Delete("useremail") 
+    http.Redirect(w, req, "/", 302)
 
 }
 
