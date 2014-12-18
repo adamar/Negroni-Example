@@ -122,8 +122,8 @@ func LoginPost(w http.ResponseWriter, req *http.Request) {
 	session := sessions.GetSession(req)
 	session.Set("hello", "world")
 
-	username := req.FormValue("username")
-	password := req.FormValue("password")
+	username := req.FormValue("inputUsername")
+	password := req.FormValue("inputPassword")
 
 	var (
 		email string
@@ -137,8 +137,6 @@ func LoginPost(w http.ResponseWriter, req *http.Request) {
 
 	fmt.Println(email)
 
-	//r := render.New(render.Options{})
-	//r.HTML(w, http.StatusOK, "home", nil)
 
 	http.Redirect(w, req, "/home", 302)
 
