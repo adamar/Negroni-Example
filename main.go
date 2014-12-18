@@ -1,7 +1,6 @@
 package main
 
 import (
-    "fmt"
 	"encoding/json"
 	"log"
 	"net/http"
@@ -13,16 +12,9 @@ import (
 	"github.com/unrolled/render"
 )
 
-var db *sql.DB
+var db *sql.DB = setupDB()
 
 func init() {
-
-    db_url := os.Getenv("DATABASE_URL")
-    db, err := sql.Open("postgres", db_url)
-    if err != nil {
-        panic(err)
-    }
-
 
     db.Exec(`CREATE TABLE users (
                  id SERIAL,
@@ -38,12 +30,11 @@ func init() {
     db.Exec(`INSERT INTO users (user_name, user_email, user_password)
              VALUES ('john', 'john@example.com', 'supersecret');`)
 
-
 }
 
 func main() {
 
-	defer db.Close()
+	//defer db.Close()
 
 	mux := http.NewServeMux()
 	n := negroni.Classic()
@@ -83,18 +74,33 @@ func main() {
 		APIHandler(w, r)
 	})
 
-        mux.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
+    mux.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
 
 	n.UseHandler(mux)
 	n.Run(":"+os.Getenv("PORT"))
 
 }
 
+
+func setupDB() *sql.DB {
+
+    db_url := os.Getenv("DATABASE_URL")
+    db, err := sql.Open("postgres", db_url)
+    if err != nil {
+        panic(err)
+    }
+
+    return db
+
+}
+
+
 func errHandler(err error) {
 	if err != nil {
 		log.Print(err)
 	}
 }
+
 
 func SimplePage(w http.ResponseWriter, req *http.Request, template string) {
 
@@ -129,15 +135,14 @@ func LoginPost(w http.ResponseWriter, req *http.Request) {
 		email string
 	)
 
-	err := db.QueryRow("SELECT user_email FROM users WHERE user_name = ? AND user_password = ?", username, password).Scan(&email)
+
+	err := db.QueryRow("SELECT user_email FROM users WHERE user_name = $1 AND user_password = $2", username, password).Scan(&email)
 	if err != nil {
-		log.Fatal(err)
-		http.Redirect(w, req, "/failedquery", 301)
+		log.Print(err)
+		http.Redirect(w, req, "/authfail", 301)
 	}
 
-	fmt.Println(email)
-
-
+    session.Set("useremail", email)
 	http.Redirect(w, req, "/home", 302)
 
 }
@@ -148,7 +153,7 @@ func SignupPost(w http.ResponseWriter, req *http.Request) {
 	password := req.FormValue("password")
 	email := req.FormValue("email")
 
-	db.Exec("INSERT INTO users (username, password, email) VAUES ('?', '?', '?')", username, email, password)
+	db.Exec("INSERT INTO users (username, password, email) VAUES ($1, $2, $3)", username, email, password)
 
 	http.Redirect(w, req, "/login", 302)
 
