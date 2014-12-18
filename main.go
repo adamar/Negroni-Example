@@ -171,7 +171,7 @@ func Logout(w http.ResponseWriter, req *http.Request) {
 
 func APIHandler(w http.ResponseWriter, req *http.Request) {
 
-	data, _ := json.Marshal("{'API Test':'works!'}")
+	data, _ := json.Marshal("{'API Test':'Works!'}")
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	w.Write(data)
 

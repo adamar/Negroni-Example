@@ -27,14 +27,6 @@
       <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
 
-   <script>
-      $(function(){
-           $.getJSON("/api",function(data){
-                alert(data)
-           }
-         )
-      })
-   </script>
 
   </head>
 
@@ -65,6 +57,7 @@
 
       <div class="starter-template">
         <h1>Home</h1>
+        <a href="/logout">logout</a>
       </div>
 
     </div><!-- /.container -->
@@ -77,6 +70,18 @@
     <script src="/static/bootstrap.min.js"></script>
     <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
     <script src="/static/ie10-viewport-bug-workaround.js"></script>
+
+
+    <script>
+       $(function(){
+            $.getJSON("/api",function(data){
+                 alert(data)
+            }
+          )
+       })
+    </script>
+
+
   </body>
 </html>
 
