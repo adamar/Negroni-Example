@@ -149,11 +149,14 @@ func LoginPost(w http.ResponseWriter, req *http.Request) {
 
 func SignupPost(w http.ResponseWriter, req *http.Request) {
 
-	username := req.FormValue("username")
-	password := req.FormValue("password")
-	email := req.FormValue("email")
+	username := req.FormValue("inputUsername")
+	password := req.FormValue("inputPassword")
+	email := req.FormValue("inputEmail")
 
-	db.Exec("INSERT INTO users (username, password, email) VAUES ($1, $2, $3)", username, email, password)
+	_, err := db.Exec("INSERT INTO users (user_name, user_password, user_email) VALUES ($1, $2, $3)", username, password, email)
+    if err != nil {
+        log.Print(err)
+    }
 
 	http.Redirect(w, req, "/login", 302)
 
