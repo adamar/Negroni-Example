@@ -1,12 +1,15 @@
 
-CREATE DATABASE IF NOT EXISTS `negroni`;
+            CREATE TABLE users (
+                 id SERIAL,
+                 user_name VARCHAR(60),  
+                 user_email VARCHAR(60),  
+                 user_password VARCHAR(60),  
+                 user_created TIMESTAMP WITH TIME ZONE,
+                 user_last_login TIMESTAMP WITH TIME ZONE, 
+                 PRIMARY KEY  (id),  
+                 CONSTRAINT users_email UNIQUE (user_email)
+            );
 
-CREATE TABLE IF NOT EXISTS `users` (
-  `id` INT NOT NULL AUTO_INCREMENT,
-  `username` VARCHAR(60),
-  `password` VARCHAR(60),
-  `email` VARCHAR(60),
-  PRIMARY KEY  (`id`)
-);
 
-
+            INSERT INTO users (user_name, user_email, user_password)
+             VALUES ('john', 'john@example.com', 'supersecret');
