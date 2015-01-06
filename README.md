@@ -6,9 +6,13 @@ This is an example Negroni web app with basic auth
 
 Note
 ----------
+- Please note that this example at the current time lacks a few important security features (ie. password hashing) 
+and as such should not be used in production without a lot of changes.
+
 - This example webapp was originally built with a MySQL DB, but has now been modified to use Postgres. There
 is now a 'mysql' branch that still uses the go-mysql lib, but development on this branch has slowed to little more
 than a trickle
+
 
 
 Features
