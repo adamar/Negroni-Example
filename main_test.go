@@ -14,7 +14,7 @@ func TestSimplePage(t *testing.T) {
 	SimplePage(resp, req, "mainpage")
 
 	if resp.Code != http.StatusOK {
-		t.Error("MD5 String failed ", resp.Code)
+		t.Error("Response Code Incorrect ", resp.Code)
 	}
 
 }
