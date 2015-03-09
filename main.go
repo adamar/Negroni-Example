@@ -3,19 +3,22 @@ package main
 import (
 	"database/sql"
 	"encoding/json"
-	"github.com/codegangsta/negroni"
-	"github.com/goincremental/negroni-sessions"
-	_ "github.com/lib/pq"
-	"github.com/unrolled/render"
+	"fmt"
 	"log"
 	"net/http"
 	"os"
+
+	"github.com/codegangsta/negroni"
+	"github.com/goincremental/negroni-sessions"
+	"github.com/goincremental/negroni-sessions/cookiestore"
+	_ "github.com/lib/pq"
+	"github.com/unrolled/render"
+	"golang.org/x/crypto/bcrypt"
 )
 
 var db *sql.DB = setupDB()
 
 func init() {
-
 	db.Exec(`CREATE TABLE users (
                  id SERIAL,
                  user_name VARCHAR(60),  
@@ -29,17 +32,15 @@ func init() {
 
 	db.Exec(`INSERT INTO users (user_name, user_email, user_password)
              VALUES ('john', 'john@example.com', 'supersecret');`)
-
 }
 
 func main() {
-
 	defer db.Close()
 
 	mux := http.NewServeMux()
 	n := negroni.Classic()
 
-	store := sessions.NewCookieStore([]byte("ohhhsooosecret"))
+	store := cookiestore.New([]byte("ohhhsooosecret"))
 	n.Use(sessions.Sessions("global_session_store", store))
 
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
@@ -77,22 +78,26 @@ func main() {
 	mux.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
 
 	n.UseHandler(mux)
-	n.Run(":" + os.Getenv("PORT"))
-
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "3300"
+	}
+	n.Run(":" + port)
 }
 
 func setupDB() *sql.DB {
-
 	db_url := os.Getenv("DATABASE_URL")
+	if db_url == "" {
+		db_url = "user=negroni password=negroni dbname=negroni-sample sslmode=disable"
+	}
 	db, err := sql.Open("postgres", db_url)
 	if err != nil {
+		fmt.Println(err)
 		panic(err)
 	}
 
 	return db
-
 }
-
 
 func errHandler(err error) {
 	if err != nil {
@@ -100,17 +105,12 @@ func errHandler(err error) {
 	}
 }
 
-
 func SimplePage(w http.ResponseWriter, req *http.Request, template string) {
-
 	r := render.New(render.Options{})
 	r.HTML(w, http.StatusOK, template, nil)
-
 }
 
-
 func SimpleAuthenticatedPage(w http.ResponseWriter, req *http.Request, template string) {
-
 	session := sessions.GetSession(req)
 	sess := session.Get("useremail")
 
@@ -120,21 +120,31 @@ func SimpleAuthenticatedPage(w http.ResponseWriter, req *http.Request, template 
 
 	r := render.New(render.Options{})
 	r.HTML(w, http.StatusOK, template, nil)
-
 }
 
 func LoginPost(w http.ResponseWriter, req *http.Request) {
-
 	session := sessions.GetSession(req)
 
 	username := req.FormValue("inputUsername")
 	password := req.FormValue("inputPassword")
 
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), 10)
+	if err != nil {
+		panic(err)
+	}
+
 	var (
-		email string
+		email                string
+		password_in_database string
 	)
 
-    err := db.QueryRow("SELECT user_email FROM users WHERE user_name = $1 AND user_password = $2", username, password).Scan(&email)
+	err = db.QueryRow("SELECT user_email, user_password FROM users WHERE user_name = $1", username).Scan(&password_in_database, &email)
+	if err != nil {
+		log.Print(err)
+		http.Redirect(w, req, "/authfail", 301)
+	}
+
+	err = bcrypt.CompareHashAndPassword([]byte(hashedPassword), []byte(password))
 	if err != nil {
 		log.Print(err)
 		http.Redirect(w, req, "/authfail", 301)
@@ -142,37 +152,34 @@ func LoginPost(w http.ResponseWriter, req *http.Request) {
 
 	session.Set("useremail", email)
 	http.Redirect(w, req, "/home", 302)
-
 }
 
 func SignupPost(w http.ResponseWriter, req *http.Request) {
-
 	username := req.FormValue("inputUsername")
 	password := req.FormValue("inputPassword")
 	email := req.FormValue("inputEmail")
 
-	_, err := db.Exec("INSERT INTO users (user_name, user_password, user_email) VALUES ($1, $2, $3)", username, password, email)
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), 10)
+	if err != nil {
+		panic(err)
+	}
+
+	_, err = db.Exec("INSERT INTO users (user_name, user_password, user_email) VALUES ($1, $2, $3)", username, string(hashedPassword), email)
 	if err != nil {
 		log.Print(err)
 	}
 
 	http.Redirect(w, req, "/login", 302)
-
 }
 
-
 func Logout(w http.ResponseWriter, req *http.Request) {
-
-    session := sessions.GetSession(req)
-    session.Delete("useremail") 
-    http.Redirect(w, req, "/", 302)
-
+	session := sessions.GetSession(req)
+	session.Delete("useremail")
+	http.Redirect(w, req, "/", 302)
 }
 
 func APIHandler(w http.ResponseWriter, req *http.Request) {
-
 	data, _ := json.Marshal("{'API Test':'Works!'}")
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	w.Write(data)
-
 }
