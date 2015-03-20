@@ -23,7 +23,7 @@
 		},
 		{
 			"ImportPath": "github.com/goincremental/negroni-sessions",
-			"Rev": "df4a04bbb25c4c5e24aaf918958d847e54f736a8"
+			"Rev": "70fc44629c84b6909bf5c265450f8d7e66658f3e"
 		},
 		{
 			"ImportPath": "github.com/gorilla/context",
