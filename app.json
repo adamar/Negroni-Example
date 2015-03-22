@@ -1,7 +1,7 @@
 {
   "name": "negroni-example",
   "description": "A barebones Negroni Example",
-  "repository": "https://github.com/adamar/Negroni-Example/tree/rygel",
+  "repository": "https://github.com/adamar/Negroni-Example",
   "keywords": ["golang", "negroni", "postgres"],
   "success_url": "/",
   "addons": [
