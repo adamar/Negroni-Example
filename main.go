@@ -128,24 +128,23 @@ func LoginPost(w http.ResponseWriter, req *http.Request) {
 	username := req.FormValue("inputUsername")
 	password := req.FormValue("inputPassword")
 
-	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), 10)
-	if err != nil {
-		panic(err)
-	}
-
 	var (
 		email                string
 		password_in_database string
 	)
 
-	err = db.QueryRow("SELECT user_email, user_password FROM users WHERE user_name = $1", username).Scan(&password_in_database, &email)
-	if err != nil {
+	err := db.QueryRow("SELECT user_email, user_password FROM users WHERE user_name = $1", username).Scan(&email, &password_in_database)
+	if err == sql.ErrNoRows {
+		http.Redirect(w, req, "/authfail", 301)
+	} else if err != nil {
 		log.Print(err)
 		http.Redirect(w, req, "/authfail", 301)
 	}
 
-	err = bcrypt.CompareHashAndPassword([]byte(hashedPassword), []byte(password))
-	if err != nil {
+	err = bcrypt.CompareHashAndPassword([]byte(password_in_database), []byte(password))
+	if err == bcrypt.ErrMismatchedHashAndPassword {
+		http.Redirect(w, req, "/authfail", 301)
+	} else if err != nil {
 		log.Print(err)
 		http.Redirect(w, req, "/authfail", 301)
 	}
