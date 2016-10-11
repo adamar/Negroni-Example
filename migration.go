@@ -2,9 +2,6 @@ package main
 
 import (
 	"database/sql"
-	"fmt"
-	"log"
-	"net/http"
 	"os"
 
 	_ "github.com/lib/pq"
