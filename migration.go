@@ -2,27 +2,26 @@ package main
 
 import (
 	"database/sql"
-	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
 	"os"
 
-	"github.com/codegangsta/negroni"
-	"github.com/goincremental/negroni-sessions"
-	"github.com/goincremental/negroni-sessions/cookiestore"
 	_ "github.com/lib/pq"
-	"github.com/unrolled/render"
 	"golang.org/x/crypto/bcrypt"
 )
 
-var db *sql.DB = setupDB()
+var db *sql.DB
 
 func main() {
 
+	db, err := setupDB()
+	if err != nil {
+		panic(err)
+	}
 	defer db.Close()
 
-	db.Exec(`CREATE TABLE users (
+	db.Exec(`CREATE TABLE IF NOT EXISTS users (
                  id SERIAL,
                  user_name VARCHAR(60),  
                  user_email VARCHAR(60),  
@@ -33,26 +32,18 @@ func main() {
                  CONSTRAINT users_email UNIQUE (user_email)
             );`)
 
-	db.Exec(`INSERT INTO users (user_name, user_email, user_password)
-             VALUES ('john', 'john@example.com', 'supersecret');`)
 }
 
-func setupDB() *sql.DB {
+func setupDB() (*sql.DB, error) {
+
 	db_url := os.Getenv("DATABASE_URL")
 	if db_url == "" {
 		db_url = "user=negroni password=negroni dbname=negroni-sample sslmode=disable"
 	}
 	db, err := sql.Open("postgres", db_url)
 	if err != nil {
-		fmt.Println(err)
-		panic(err)
+		return nil, err
 	}
 
-	return db
-}
-
-func errHandler(err error) {
-	if err != nil {
-		log.Print(err)
-	}
+	return db, nil
 }
