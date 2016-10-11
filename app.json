@@ -5,7 +5,7 @@
   "success_url": "/",
   "scripts": {
     "postdeploy": "go run migration.go"
-  }
+  },
   "addons": [
       "heroku-postgresql"
   ]
