@@ -16,25 +16,14 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-var db *sql.DB = setupDB()
-
-func init() {
-	db.Exec(`CREATE TABLE users (
-                 id SERIAL,
-                 user_name VARCHAR(60),  
-                 user_email VARCHAR(60),  
-                 user_password VARCHAR(60),  
-                 user_created TIMESTAMP WITH TIME ZONE,
-                 user_last_login TIMESTAMP WITH TIME ZONE, 
-                 PRIMARY KEY  (id),  
-                 CONSTRAINT users_email UNIQUE (user_email)
-            );`)
-
-	db.Exec(`INSERT INTO users (user_name, user_email, user_password)
-             VALUES ('john', 'john@example.com', 'supersecret');`)
-}
+var db *sql.DB
 
 func main() {
+
+	db, err := setupDB()
+	if err != nil {
+		panic(err)
+	}
 	defer db.Close()
 
 	mux := http.NewServeMux()
@@ -85,18 +74,18 @@ func main() {
 	n.Run(":" + port)
 }
 
-func setupDB() *sql.DB {
+func setupDB() (*sql.DB, error) {
+
 	db_url := os.Getenv("DATABASE_URL")
 	if db_url == "" {
 		db_url = "user=negroni password=negroni dbname=negroni-sample sslmode=disable"
 	}
 	db, err := sql.Open("postgres", db_url)
 	if err != nil {
-		fmt.Println(err)
-		panic(err)
+		return nil, err
 	}
 
-	return db
+	return db, nil
 }
 
 func errHandler(err error) {
